@@ -245,6 +245,34 @@ public class BinaryTree {
 		return currentLevelNodes;
 	}
 
+	// return the number of leaf(REC)
+	public static int getLeaf(TreeNode root) {
+		if (root == null)
+			return 0;
+		if (root.leftNode == null && root.rightNode == null)
+			return 1;
+		return getLeaf(root.leftNode) + getLeaf(root.rightNode);
+	}
+
+	// return the number of leaf(non-REC)
+	public static int getLeafNonREC(TreeNode root) {
+		if (root == null)
+			return 0;
+		Queue<TreeNode> queue = new LinkedList<TreeNode>();
+		int leaf = 0;
+		queue.add(root);
+		while (!queue.isEmpty()) {
+			TreeNode curr = queue.remove();
+			if (curr.leftNode != null)
+				queue.add(curr.leftNode);
+			if (curr.rightNode != null)
+				queue.add(curr.rightNode);
+			if (curr.leftNode == null && curr.rightNode == null)
+				leaf++;
+		}
+		return leaf;
+	}
+
 	// determine whether two trees are same(REC)
 	public static boolean sameTree(TreeNode root1, TreeNode root2) {
 		if (root1 == null && root2 == null)
@@ -363,7 +391,7 @@ public class BinaryTree {
 		return newRoot;
 	}
 
-	// check whether two trees are a mirror(REC)
+	// check whether two trees are symmetric(REC)
 	public static boolean isMirror(TreeNode root1, TreeNode root2) {
 		if (root1 == null && root2 == null)
 			return true;
@@ -374,6 +402,41 @@ public class BinaryTree {
 		return isMirror(root1.leftNode, root2.rightNode) && isMirror(root1.rightNode, root2.leftNode);
 	}
 
+	// check whether a tree is symmetric(REC)
+	public static boolean isMirrorTree(TreeNode root) {
+		if (root == null)
+			return true;
+		else
+			return isMirror(root.leftNode, root.rightNode);
+	}
+
+	// return lowest common ancestor(REC)
+	public static TreeNode LCA(TreeNode root, TreeNode n1, TreeNode n2) {
+		if (!inTree(root, n1) || !inTree(root, n2))
+			return new TreeNode(-1);
+		if (inTree(root.leftNode, n1)) {
+			if (inTree(root.rightNode, n2))
+				return root;
+			else
+				return LCA(root.leftNode, n1, n2);
+
+		} else {
+			if (inTree(root.leftNode, n2))
+				return root;
+			else
+				return LCA(root.rightNode, n1, n2);
+		}
+
+	}
+
+	// check whether a node is in the tree(REC)
+	public static boolean inTree(TreeNode root, TreeNode n) {
+		if (root == null || n == null)
+			return false;
+		if (root == n)
+			return true;
+		return inTree(root.leftNode, n) || inTree(root.rightNode, n);
+	}
 	
 	// main
 	public static void main(String[] args) {
@@ -411,6 +474,8 @@ public class BinaryTree {
 		// levelTraverse(root);
 		// System.out.println(getNumberOfKthLevel(root, 3));
 		// System.out.println(getNumberOfKthLevelNonREC(root, 3));
+		// System.out.println(getLeaf(anotherRoot));
+		// System.out.println(getLeafNonREC(anotherRoot));
 		// System.out.println(sameTree(root, anotherRoot));
 		// System.out.println(sameTreeNonREC(root, anotherRoot));
 		// System.out.println(isAVLTree(a));
@@ -421,5 +486,11 @@ public class BinaryTree {
 		// TreeNode mirror = getMirrorCopy(root);
 		// System.out.println(isMirror(root,mirror));
 		// System.out.println(isMirror(root,anotherRoot));
+		// System.out.println(isMirrorTree(a));
+		// System.out.println(isMirrorTree(root));
+		// System.out.println(inTree(a, d));
+		// TreeNode a = root.leftNode.leftNode.leftNode;
+		// TreeNode b = root.leftNode.rightNode;
+		// System.out.println(LCA(root,a,b).val);
 	}
 }
