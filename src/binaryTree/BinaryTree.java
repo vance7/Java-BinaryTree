@@ -437,24 +437,32 @@ public class BinaryTree {
 			return true;
 		return inTree(root.leftNode, n) || inTree(root.rightNode, n);
 	}
-	
-	// main
+
+	// check is balanced tree(REC)
+	public static boolean isBalanced(TreeNode root) {
+		if (root == null)
+			return true;
+		if (Math.abs(getDepth(root.leftNode) - getDepth(root.rightNode)) > 1)
+			return false;
+		return isBalanced(root.leftNode) && isBalanced(root.rightNode);
+	}
+
+	// check if the tree is complete tree. Each node has two or 0 child nodes.
+	public static boolean checkCompleteTree(TreeNode root) {
+		if (root == null)
+			return true;
+		if (root.leftNode != null && root.rightNode == null)
+			return false;
+		if (root.leftNode == null && root.rightNode != null)
+			return false;
+		return checkCompleteTree(root.leftNode) && checkCompleteTree(root.rightNode);
+	}
+
 	public static void main(String[] args) {
-		int[] array = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		int[] anotherArray = { 1, 2, 3, 4, 5, 6, 7, 8 };
+		int[] array = { 1, 2, 5, 3, 5 };
+		int[] anotherArray = { 1 };
 		TreeNode root = buildTree(array);
 		TreeNode anotherRoot = buildTree(anotherArray);
-		// TreeNode a = new TreeNode();
-		// TreeNode b = new TreeNode();
-		// TreeNode c = new TreeNode();
-		// TreeNode d = new TreeNode();
-		// TreeNode e = new TreeNode();
-		// TreeNode f = new TreeNode();
-		// a.leftNode = b;
-		// a.rightNode = c;
-		// b.leftNode = d;
-		// d.leftNode = e;
-		// c.rightNode = f;
 		// System.out.println(getNumber(root));
 		// System.out.println(getNumberNonREC(root));
 		// System.out.println(getDepth(root));
@@ -491,6 +499,7 @@ public class BinaryTree {
 		// System.out.println(inTree(a, d));
 		// TreeNode a = root.leftNode.leftNode.leftNode;
 		// TreeNode b = root.leftNode.rightNode;
-		// System.out.println(LCA(root,a,b).val);
+		// System.out.println(LCA(root,a,b).val);];
+
 	}
 }
