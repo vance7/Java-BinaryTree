@@ -314,16 +314,6 @@ public class BinaryTree {
 		return true;
 	}
 
-	// determine whether is a AVL tree(REC)
-	public static boolean isAVLTree(TreeNode root) {
-		if (root == null)
-			return true;
-		else {
-			int distance = Math.abs(getDepth(root.leftNode) - getDepth(root.rightNode));
-			return distance <= 1 && isAVLTree(root.leftNode) && isAVLTree(root.rightNode);
-		}
-	}
-
 	// get the mirror tree by changing the structure(REC)
 	public static TreeNode getMirror(TreeNode root) {
 		if (root == null)
@@ -447,19 +437,72 @@ public class BinaryTree {
 		return isBalanced(root.leftNode) && isBalanced(root.rightNode);
 	}
 
-	// check if the tree is complete tree. Each node has two or 0 child nodes.
-	public static boolean checkCompleteTree(TreeNode root) {
+	// check if the tree is full tree. Each node has two or 0 child nodes.
+	public static boolean checkFullTree(TreeNode root) {
 		if (root == null)
 			return true;
 		if (root.leftNode != null && root.rightNode == null)
 			return false;
 		if (root.leftNode == null && root.rightNode != null)
 			return false;
-		return checkCompleteTree(root.leftNode) && checkCompleteTree(root.rightNode);
+		return checkFullTree(root.leftNode) && checkFullTree(root.rightNode);
+	}
+
+	// check if the tree is full tree. (non-REC)
+	public static boolean checkFullTreeNonREC(TreeNode root) {
+		if (root == null)
+			return true;
+		Queue<TreeNode> queue = new LinkedList<>();
+		queue.add(root);
+		while (!queue.isEmpty()) {
+			TreeNode curr = queue.remove();
+			if (curr.leftNode != null && curr.rightNode != null) {
+				queue.add(curr.leftNode);
+				queue.add(curr.rightNode);
+			}
+			if (curr.leftNode != null && curr.rightNode == null)
+				return false;
+			if (curr.leftNode == null && curr.rightNode != null)
+				return false;
+		}
+		return true;
+	}
+
+	// check if the tree is complete tree (non-REC)
+	public static boolean checkCompletedTreeNonREC(TreeNode root) {
+		if(root == null)
+			return true;
+		Queue<TreeNode> queue = new LinkedList<>();
+		boolean mustHaveNoChild = false;
+		queue.add(root);
+		while(!queue.isEmpty()){
+			TreeNode curr = queue.remove();
+			if(mustHaveNoChild){
+				if(curr.leftNode!=null||curr.rightNode!=null){
+					return false;
+				}
+			}
+			else{
+				if(curr.leftNode!=null&&curr.rightNode!=null){
+					queue.add(curr.leftNode);
+					queue.add(curr.rightNode);
+				}
+				else if(curr.leftNode!=null&&curr.rightNode==null){
+					queue.add(curr.leftNode);
+					mustHaveNoChild = true;
+				}
+				else if(curr.leftNode==null&&curr.rightNode!=null){
+					return false;
+				}
+				else
+					mustHaveNoChild = true;
+			}
+		}
+		return true;
 	}
 
 	public static void main(String[] args) {
-		int[] array = { 1, 2, 5, 3, 5 };
+		int[] array = { 1, 2, 5, 3,5 };
 		int[] anotherArray = { 1 };
 		TreeNode root = buildTree(array);
 		TreeNode anotherRoot = buildTree(anotherArray);
@@ -499,7 +542,8 @@ public class BinaryTree {
 		// System.out.println(inTree(a, d));
 		// TreeNode a = root.leftNode.leftNode.leftNode;
 		// TreeNode b = root.leftNode.rightNode;
-		// System.out.println(LCA(root,a,b).val);];
+		// System.out.println(LCA(root,a,b).val);
+		System.out.println(checkCompletedTreeNonREC(root));
 
 	}
 }
