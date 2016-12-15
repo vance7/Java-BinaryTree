@@ -9,18 +9,17 @@ public class BinaryTree {
 		TreeNode leftNode;
 		TreeNode rightNode;
 
-		public TreeNode() {
-
-		};
-
 		public TreeNode(int i) {
 			this.val = i;
 			this.leftNode = null;
 			this.rightNode = null;
 		}
+
+		public TreeNode(Object object) {
+		}
 	}
 
-	// build a binary tree
+	// build a binary tree by an array
 	public static TreeNode buildTree(int[] array) {
 		if (array.length == 1)
 			return new TreeNode(array[0]);
@@ -470,80 +469,81 @@ public class BinaryTree {
 
 	// check if the tree is complete tree (non-REC)
 	public static boolean checkCompletedTreeNonREC(TreeNode root) {
-		if(root == null)
+		if (root == null)
 			return true;
 		Queue<TreeNode> queue = new LinkedList<>();
 		boolean mustHaveNoChild = false;
 		queue.add(root);
-		while(!queue.isEmpty()){
+		while (!queue.isEmpty()) {
 			TreeNode curr = queue.remove();
-			if(mustHaveNoChild){
-				if(curr.leftNode!=null||curr.rightNode!=null){
+			if (mustHaveNoChild) {
+				if (curr.leftNode != null || curr.rightNode != null) {
 					return false;
 				}
-			}
-			else{
-				if(curr.leftNode!=null&&curr.rightNode!=null){
+			} else {
+				if (curr.leftNode != null && curr.rightNode != null) {
 					queue.add(curr.leftNode);
 					queue.add(curr.rightNode);
-				}
-				else if(curr.leftNode!=null&&curr.rightNode==null){
+				} else if (curr.leftNode != null && curr.rightNode == null) {
 					queue.add(curr.leftNode);
 					mustHaveNoChild = true;
-				}
-				else if(curr.leftNode==null&&curr.rightNode!=null){
+				} else if (curr.leftNode == null && curr.rightNode != null) {
 					return false;
-				}
-				else
+				} else
 					mustHaveNoChild = true;
 			}
 		}
 		return true;
 	}
 
-	public static void main(String[] args) {
-		int[] array = { 1, 2, 5, 3,5 };
-		int[] anotherArray = { 1 };
-		TreeNode root = buildTree(array);
-		TreeNode anotherRoot = buildTree(anotherArray);
-		// System.out.println(getNumber(root));
-		// System.out.println(getNumberNonREC(root));
-		// System.out.println(getDepth(root));
-		// System.out.println(getDepthNonREC(root));
-		// preOrder(root);
-		// System.out.println("");
-		// preOrderNonREC(root);
-		// System.out.println("");
-		// inOrder(root);
-		// System.out.println("");
-		// inOrderNonREC(root);
-		// System.out.println("");
-		// postOrder(root);
-		// System.out.println("");
-		// postOrderNonREC(root);
-		// System.out.println("");
-		// levelTraverse(root);
-		// System.out.println(getNumberOfKthLevel(root, 3));
-		// System.out.println(getNumberOfKthLevelNonREC(root, 3));
-		// System.out.println(getLeaf(anotherRoot));
-		// System.out.println(getLeafNonREC(anotherRoot));
-		// System.out.println(sameTree(root, anotherRoot));
-		// System.out.println(sameTreeNonREC(root, anotherRoot));
-		// System.out.println(isAVLTree(a));
-		// levelTraverse(getMirror(root));
-		// levelTraverse(getMirrorNonREC(root));
-		// levelTraverse(getMirrorCopy(root));
-		// levelTraverse(getMirrorCopyNonREC(root));
-		// TreeNode mirror = getMirrorCopy(root);
-		// System.out.println(isMirror(root,mirror));
-		// System.out.println(isMirror(root,anotherRoot));
-		// System.out.println(isMirrorTree(a));
-		// System.out.println(isMirrorTree(root));
-		// System.out.println(inTree(a, d));
-		// TreeNode a = root.leftNode.leftNode.leftNode;
-		// TreeNode b = root.leftNode.rightNode;
-		// System.out.println(LCA(root,a,b).val);
-		System.out.println(checkCompletedTreeNonREC(root));
+	// determine if the tree has a root-to-leaf path such that adding up all the
+	// values along the path equals the given sum.
+	public static boolean hasPathSum(TreeNode root, int sum) {
+		if (root == null)
+			return false;
+		if (root.leftNode == null && root.rightNode == null)
+			return root.val == sum;
+		return hasPathSum(root.leftNode, sum - root.val) || hasPathSum(root.rightNode, sum - root.val);
+	}
 
+	// determine the paths which sum to a given value(no need from root to leaf)
+	public static int pathSum(TreeNode root, int sum) {
+		if (root == null)
+			return 0;
+		return findPath(root, sum) + pathSum(root.leftNode, sum) + pathSum(root.rightNode, sum);
+	}
+
+	public static int findPath(TreeNode root, int sum) {
+		int res = 0;
+		if (root == null)
+			return res;
+		if (sum == root.val)
+			res++;
+		res += findPath(root.leftNode, sum - root.val);
+		res += findPath(root.rightNode, sum - root.val);
+		return res;
+	}
+
+	// construct a tree according to inOrder and preOrder
+	public TreeNode buildTree(int[] preorder, int[] inorder) {
+		return helper(0, 0, preorder.length - 1, preorder, inorder);
+	}
+
+	public TreeNode helper(int preStart, int inStart, int inEnd, int[] preorder, int[] inorder) {
+		if (inStart > inEnd || preStart > preorder.length - 1)
+			return null;
+		TreeNode root = new TreeNode(preorder[preStart]);
+		int index = 0;
+		for (int i = inStart; i <= inEnd; i++) {
+			if (inorder[i] == root.val)
+				index = i;
+		}
+		root.leftNode = helper(preStart + 1, inStart, index - 1, preorder, inorder);
+		root.rightNode = helper(preStart + index + 1 - inStart, index + 1, inEnd, preorder, inorder);
+		return root;
+	}
+
+	
+	public static void main(String[] args) {
 	}
 }
